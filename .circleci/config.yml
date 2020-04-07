@@ -14,7 +14,7 @@ jobs:
       - run:
           command: |
             # pytest would be a dep in requirements.txt
-            python --version
+            python -m pytest
           name: Test
 
 workflows:
