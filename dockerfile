@@ -4,7 +4,7 @@ COPY requirements.txt /
 COPY bin /bin
 RUN pip3 install -r /requirements.txt
 
-COPY app /app
+COPY covidmi /covidmi
 WORKDIR /
 
 ENTRYPOINT ["./bin/start.sh"]
