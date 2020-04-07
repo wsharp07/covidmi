@@ -12,10 +12,10 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: python -m pytest --junitxml=test_results
+          command: python -m pytest --junitxml=test-results/pytest/results.xml
           name: Test
       - store_test_results:
-          path: test_results
+          path: test-results
 
 workflows:
   main:
