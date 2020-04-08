@@ -1,0 +1,11 @@
+orbs:
+  azure-acr: circleci/azure-acr@0.2.0
+version: 2.1
+workflows:
+  build-and-publish-docker-image:
+    jobs:
+      - azure-acr/build-and-push-image:
+          login-server-name: covidmi.azurecr.io
+          registry-name: covidmi
+          repo: covidmi-repo
+          tag: $CIRCLE_TAG
