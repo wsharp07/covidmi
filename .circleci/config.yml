@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   python: circleci/python@0.2.1
+  azure-acr: circleci/azure-acr@0.2.0
 
 jobs:
   build-and-test:
@@ -16,8 +17,14 @@ jobs:
           name: Test
       - store_test_results:
           path: test-results
+  azure-acr/build-and-push-image:
+    login-server-name: covidmi.azurecr.io
+    registry-name: covidmi
+    repo: covidmi-repo
+    tag: $CIRCLE_TAG
 
 workflows:
   main:
     jobs:
       - build-and-test
+      - azure-acr/build-and-push-image
