@@ -29,7 +29,7 @@ jobs:
             pip install -r test-requirements.txt
             python -m pytest --junitxml=test-results/pytest/results.xml
       - store_test_results:
-        path: test-results
+          path: test-results
 
   build_deploy:
     docker:
