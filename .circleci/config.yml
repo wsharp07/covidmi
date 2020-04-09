@@ -1,28 +1,55 @@
 version: 2.1
 
 orbs:
-  python: circleci/python@0.2.1
+  azure-cli: circleci/azure-cli@1.1.0
   azure-acr: circleci/azure-acr@0.2.0
 
-workflows:
-  "API Deployment flow":
-    jobs:
-      - python/build-and-test:
-          executor: python/default
-          steps:
-            - checkout
-            - python/load-cache
-            - python/install-deps
-            - python/save-cache
-            - run:
-                command: python -m pytest --junitxml=test-results/pytest/results.xml
-                name: Test
-            - store_test_results:
-                path: test-results
+jobs:
+  lint:
+    docker:
+      - image: circleci/python:3.7.7
+    steps:
+      - checkout
+      - run:
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r test-requirements.txt
+            flake8 --exclude venv --statistics
+
+  test:
+    docker:
+      - image: circleci/python:3.7.7
+    steps:
+      - checkout
+      - run:
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r test-requirements.txt
+            python -m pytest --junitxml=test-results/pytest/results.xml
+      - store_test_results:
+        path: test-results
+
+  build_deploy:
+    docker:
+      - image: circleci/python:3.7.7
+    steps:
+      - setup_remote_docker
       - azure-acr/build-and-push-image:
           login-server-name: covidmi.azurecr.io
           registry-name: covidmi
           repo: covidmi
           tag: $CIRCLE_WORKFLOW_ID
           path: covidmi/api
-  
+
+workflows:
+  version: 2
+  lint_test_deploy:
+    jobs:
+      - lint
+      - test
+      - build_deploy:
+          requires:
+            - lint
+            - test
