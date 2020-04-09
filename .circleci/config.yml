@@ -14,7 +14,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r test-requirements.txt
+            pip install -r requirements.txt
             flake8 --exclude venv --statistics
 
   test:
@@ -26,7 +26,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r test-requirements.txt
+            pip install -r requirements.txt
             python -m pytest --junitxml=test-results/pytest/results.xml
       - store_test_results:
           path: test-results
