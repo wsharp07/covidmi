@@ -7,7 +7,7 @@ orbs:
 workflows:
   "API Deployment flow":
     jobs:
-      - build-and-test:
+      - python/build-and-test:
           executor: python/default
           steps:
             - checkout
