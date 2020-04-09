@@ -41,7 +41,6 @@ jobs:
           registry-name: covidmi
           repo: covidmi
           tag: $CIRCLE_WORKFLOW_ID
-          path: covidmi/api
 
 workflows:
   version: 2
