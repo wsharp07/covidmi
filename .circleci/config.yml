@@ -36,8 +36,6 @@ jobs:
       - image: circleci/python:3.7.7
     steps:
       - setup_remote_docker
-      - run:
-          command: ls
       - azure-acr/build-and-push-image:
           login-server-name: covidmi.azurecr.io
           registry-name: covidmi
