@@ -1,13 +1,15 @@
 from datetime import datetime
 import sqlite3
+import os
 
 
 class CovidmiRepo:
 
     def __init__(self):
+        self.DATA_PATH = os.path.join(os.path.abspath('./data'), "covid-mi.db")
         self.table_name = 'covidmi'
-        self.connection = sqlite3.connect('covid-mi.db')
-        self.cursor = self.connection.cursor()
+        self.conn = sqlite3.connect(self.DATA_PATH)
+        self.cursor = self.conn.cursor()
         self.today = datetime.utcnow().strftime('%Y-%m-%d')
 
         self.create_table()
@@ -29,7 +31,7 @@ class CovidmiRepo:
         VALUES (?,?,?,datetime('now'))'''
 
         self.cursor.execute(sql, data)
-        self.connection.commit()
+        self.conn.commit()
 
     def exists_for_today(self, county):
 
