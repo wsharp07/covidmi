@@ -22,3 +22,6 @@ SQL_HOSTNAME=
 SQL_USERNAME=
 SQL_PASSWORD=
 ```
+
+Try it out:
+https://covidmi.azurewebsites.net/counties
