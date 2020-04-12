@@ -5,6 +5,7 @@ from data_parser import DataParser
 from flask import Flask, Response, jsonify
 from dotenv import load_dotenv
 from flask_restx import Resource, Api, fields
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 def insert_data(repo, record):
@@ -21,6 +22,7 @@ def insert_data(repo, record):
 load_dotenv()
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 api = Api(app, version='1.0',
           title='COVID-MI',
