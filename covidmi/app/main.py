@@ -23,6 +23,20 @@ load_dotenv()
 app = Flask(__name__)
 
 
+@app.route("/", methods=['GET'])
+def index():
+    res = '''<div style="font-family: monospace; white-space: pre;">
+    ██████╗ ██████╗ ██╗   ██╗██╗██████╗       ███╗   ███╗██╗
+    ██╔════╝██╔═══██╗██║   ██║██║██╔══██╗      ████╗ ████║██║
+    ██║     ██║   ██║██║   ██║██║██║  ██║█████╗██╔████╔██║██║
+    ██║     ██║   ██║╚██╗ ██╔╝██║██║  ██║╚════╝██║╚██╔╝██║██║
+    ╚██████╗╚██████╔╝ ╚████╔╝ ██║██████╔╝      ██║ ╚═╝ ██║██║
+    ╚═════╝ ╚═════╝   ╚═══╝  ╚═╝╚═════╝       ╚═╝     ╚═╝╚═╝
+    </div>
+    '''
+    return res
+
+
 @app.route("/load_data", methods=['POST'])
 def load_data():
     repo = CovidmiRepo()
