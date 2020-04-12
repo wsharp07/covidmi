@@ -4,7 +4,7 @@ build:
 	@docker build -t $(app_name) .
 
 run:
-	docker run --detach -p 8003:80 $(app_name)
+	docker run --detach -p 8003:80 --env-file=.env $(app_name)
 
 kill:
 	@echo 'Killing container...'

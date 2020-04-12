@@ -3,11 +3,17 @@ class DataParser:
     def is_valid(self, county):
         if (county == 'Other*'):
             return False
+        if (county == 'MDOC*'):
+            return False
+        if (county == 'FCI**'):
+            return False
         if (county == 'Out of State'):
             return False
         if (county == 'Unknown'):
             return False
         if (county == 'Total'):
+            return False
+        if (county == 'Totals'):
             return False
         if (county == 'County'):
             return False

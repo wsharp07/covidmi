@@ -3,6 +3,7 @@ from covidmi_repo import CovidmiRepo
 from data_loader import DataLoader
 from data_parser import DataParser
 from flask import Flask, Response, jsonify
+from dotenv import load_dotenv
 
 
 def insert_data(repo, record):
@@ -16,7 +17,24 @@ def insert_data(repo, record):
     repo.insert((county, cases, deaths))
 
 
+load_dotenv()
+
+
 app = Flask(__name__)
+
+
+@app.route("/", methods=['GET'])
+def index():
+    res = '''<div style="font-family: monospace; white-space: pre;">
+    ██████╗ ██████╗ ██╗   ██╗██╗██████╗       ███╗   ███╗██╗
+    ██╔════╝██╔═══██╗██║   ██║██║██╔══██╗      ████╗ ████║██║
+    ██║     ██║   ██║██║   ██║██║██║  ██║█████╗██╔████╔██║██║
+    ██║     ██║   ██║╚██╗ ██╔╝██║██║  ██║╚════╝██║╚██╔╝██║██║
+    ╚██████╗╚██████╔╝ ╚████╔╝ ██║██████╔╝      ██║ ╚═╝ ██║██║
+    ╚═════╝ ╚═════╝   ╚═══╝  ╚═╝╚═════╝       ╚═╝     ╚═╝╚═╝
+    </div>
+    '''
+    return res
 
 
 @app.route("/load_data", methods=['POST'])
