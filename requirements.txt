@@ -1,5 +1,6 @@
 astroid==2.3.3
 attrs==19.3.0
+autopep8==1.5.1
 beautifulsoup4==4.8.2
 certifi==2019.11.28
 chardet==3.0.4
@@ -25,9 +26,11 @@ py==1.8.1
 pycodestyle==2.5.0
 pyflakes==2.1.1
 pylint==2.4.4
+pyodbc==4.0.30
 pyparsing==2.4.7
 pytest==5.4.1
 python-dateutil==2.8.1
+python-dotenv==0.12.0
 pytz==2019.3
 requests==2.23.0
 six==1.14.0
