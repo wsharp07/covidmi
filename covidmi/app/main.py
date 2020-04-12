@@ -3,6 +3,7 @@ from covidmi_repo import CovidmiRepo
 from data_loader import DataLoader
 from data_parser import DataParser
 from flask import Flask, Response, jsonify
+from dotenv import load_dotenv
 
 
 def insert_data(repo, record):
@@ -14,6 +15,9 @@ def insert_data(repo, record):
         return
 
     repo.insert((county, cases, deaths))
+
+
+load_dotenv()
 
 
 app = Flask(__name__)

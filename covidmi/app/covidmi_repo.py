@@ -1,32 +1,49 @@
 from datetime import datetime
-import sqlite3
+import pyodbc
+import os
 
 
 class CovidmiRepo:
 
     def __init__(self):
-        self.table_name = 'covidmi'
-        self.connection = sqlite3.connect('covid-mi.db')
+        self.connection = pyodbc.connect(self.get_conn_string())
         self.cursor = self.connection.cursor()
+        self.table_name = 'covidmi'
+        self.TIMEZONE = 'Eastern Standard Time'
         self.today = datetime.utcnow().strftime('%Y-%m-%d')
 
         self.create_table()
 
+    def get_conn_string(self):
+        server = os.getenv('SQL_HOSTNAME')
+        database = os.getenv('SQL_DATABASE')
+        username = os.getenv('SQL_USERNAME')
+        password = os.getenv('SQL_PASSWORD')
+        return "DRIVER={ODBC Driver 17 for SQL Server};" + \
+            f"SERVER={server};" + \
+            f"DATABASE={database};" + \
+            f"UID={username};" + \
+            f"PWD={password}"
+
     def create_table(self):
         create_sql = f"""
-        CREATE TABLE IF NOT EXISTS {self.table_name} (
-            Id INTEGER PRIMARY KEY,
-            County TEXT NOT NULL,
-            Cases INTEGER DEFAULT 0,
-            Deaths INTEGER DEFAULT 0,
-            CreatedAt TEXT
-        );"""
-
+        IF NOT EXISTS (SELECT * FROM sysobjects
+        WHERE name='{self.table_name}' and xtype='U')
+            CREATE TABLE {self.table_name} (
+                Id INT PRIMARY KEY IDENTITY,
+                County VARCHAR(50) NOT NULL,
+                Cases INT DEFAULT 0,
+                Deaths INT DEFAULT 0,
+                CreatedAt DATETIME DEFAULT GETUTCDATE()
+            );
+        """
+        print(create_sql)
         self.cursor.execute(create_sql)
+        self.connection.commit()
 
     def insert(self, data):
-        sql = f'''INSERT INTO {self.table_name} (County, Cases, Deaths, CreatedAt)
-        VALUES (?,?,?,datetime('now'))'''
+        sql = f'''INSERT INTO {self.table_name} (County, Cases, Deaths)
+        VALUES (?,?,?)'''
 
         self.cursor.execute(sql, data)
         self.connection.commit()
@@ -34,11 +51,15 @@ class CovidmiRepo:
     def exists_for_today(self, county):
 
         sql = f"""
-        SELECT COUNT(*)
-        FROM {self.table_name}
+        SELECT
+            COUNT(*)
+        FROM
+            {self.table_name}
         WHERE
-        {self.table_name}.County = '{county}'
-        AND date({self.table_name}.CreatedAt, 'localtime') = '{self.today}'
+            {self.table_name}.County = '{county}'
+            AND CAST({self.table_name}.CreatedAt
+                    AT TIME ZONE 'UTC'
+                    AT TIME ZONE '{self.TIMEZONE}' AS DATE) = '{self.today}'
         """
 
         self.cursor.execute(sql)
@@ -73,7 +94,9 @@ class CovidmiRepo:
             {self.table_name}.County,
             {self.table_name}.Cases,
             {self.table_name}.Deaths,
-            datetime({self.table_name}.CreatedAt, 'localtime') AS [CreatedAt]
+            CAST({self.table_name}.CreatedAt
+                AT TIME ZONE 'UTC'
+                AT TIME ZONE '{self.TIMEZONE}' AS NVARCHAR) AS [CreatedAt]
         FROM
             {self.table_name}
         ORDER BY
@@ -93,11 +116,15 @@ class CovidmiRepo:
             {self.table_name}.County,
             {self.table_name}.Cases,
             {self.table_name}.Deaths,
-            datetime({self.table_name}.CreatedAt, 'localtime') AS [CreatedAt]
+            CAST({self.table_name}.CreatedAt
+                AT TIME ZONE 'UTC'
+                AT TIME ZONE '{self.TIMEZONE}' AS NVARCHAR) AS [CreatedAt]
         FROM
             {self.table_name}
         WHERE
-            date({self.table_name}.CreatedAt, 'localtime') = '{self.today}'
+            CAST({self.table_name}.CreatedAt
+                AT TIME ZONE 'UTC'
+                AT TIME ZONE '{self.TIMEZONE}' AS DATE) = '{self.today}'
         ORDER BY
             {self.table_name}.CreatedAt DESC"""
 
@@ -115,11 +142,13 @@ class CovidmiRepo:
             {self.table_name}.County,
             {self.table_name}.Cases,
             {self.table_name}.Deaths,
-            datetime({self.table_name}.CreatedAt, 'localtime') AS [CreatedAt]
+            CAST({self.table_name}.CreatedAt
+                AT TIME ZONE 'UTC'
+                AT TIME ZONE '{self.TIMEZONE}' AS NVARCHAR) AS [CreatedAt]
         FROM
             {self.table_name}
         WHERE
-            {self.table_name}.County = '{county}' COLLATE NOCASE
+            {self.table_name}.County = '{county}'
         ORDER BY
             {self.table_name}.CreatedAt DESC"""
 
